@@ -37,6 +37,74 @@ export class AuthService {
    */
 
   /**
+   * Header로 부터 토큰을 받을 때, 검증절차
+   *
+   * {authorization: 'Basic {token}'}
+   * {authorization: 'Bearer {token}'}
+   */
+  extractTokenFromHeader(header: string, isBearer: boolean) {
+    const splitToken = header.split(' ');
+
+    const prefix = isBearer ? 'Bearer' : 'Basic';
+    if (splitToken.length !== 2 || splitToken[0] !== prefix) {
+      throw new UnauthorizedException('잘못된 토큰입니다!');
+    }
+
+    const token = splitToken[1];
+
+    return token;
+  }
+
+  decodeBasicToken(base64String: string) {
+    const decoded = Buffer.from(base64String, 'base64').toString('utf8');
+
+    const split = decoded.split(':');
+
+    if (split.length !== 2) {
+      throw new UnauthorizedException('잘못된 유형의 토큰입니다.');
+    }
+
+    const [email, password] = split;
+
+    return {
+      email,
+      password,
+    };
+  }
+
+  /**
+   * 토큰 검증
+   */
+  verifyToken(token: string) {
+    try {
+      return this.jwtService.verify(token, {
+        secret: JWT_SECRET,
+      });
+    } catch (e) {
+      throw new UnauthorizedException('토큰이 만료됐거나 잘못된 토큰입니다.');
+    }
+  }
+
+  rotateToken(token: string, isRefreshToken: boolean) {
+    const decoded = this.jwtService.verify(token, {
+      secret: JWT_SECRET,
+    });
+
+    if (decoded.type !== 'refresh') {
+      throw new UnauthorizedException(
+        '토큰 재발급은 Refresh 토큰으로만 가능합니다.',
+      );
+    }
+
+    return this.signToken(
+      {
+        ...decoded,
+      },
+      isRefreshToken,
+    );
+  }
+
+  /**
    * Payload에 들어갈 정보
    *
    * 1) email
@@ -98,11 +166,17 @@ export class AuthService {
     return this.loginUser(existingUser);
   }
 
-  // async registerWithEmail(
-  //   user: Pick<UserModel, 'nickname' | 'email' | 'password'>,
-  // ) {
-  //   // Salt는 hash할 때, 자동으로 생성됨
-  //   const hash = await bcrypt.hash(user.password, HASH_ROUNDS);
+  async registerWithEmail(
+    user: Pick<UserModel, 'nickname' | 'email' | 'password'>,
+  ) {
+    // Salt는 hash할 때, 자동으로 생성됨
+    const hash = await bcrypt.hash(user.password, HASH_ROUNDS);
 
-  // }
+    const newUser = await this.usersService.createUser({
+      ...user,
+      password: hash,
+    });
+
+    return this.loginUser(newUser);
+  }
 }

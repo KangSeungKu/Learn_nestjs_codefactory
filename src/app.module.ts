@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostModel } from './posts/entities/posts.entity';
 import { UserModel } from './users/entities/users.entity';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UserModel } from './users/entities/users.entity';
     PostsModule,
     AuthModule,
     UsersModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
