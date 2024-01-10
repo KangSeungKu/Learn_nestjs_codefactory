@@ -98,11 +98,11 @@ export class AuthService {
     return this.loginUser(existingUser);
   }
 
-  //   async registerWithEmail(
-  //     user: Pick<UserModel, 'nickname' | 'email' | 'password'>,
-  //   ) {
-  //     // Salt는 hash할 때, 자동으로 생성됨
-  //     const hash = await bcrypt.hash(user.password, HASH_ROUNDS);
+  // async registerWithEmail(
+  //   user: Pick<UserModel, 'nickname' | 'email' | 'password'>,
+  // ) {
+  //   // Salt는 hash할 때, 자동으로 생성됨
+  //   const hash = await bcrypt.hash(user.password, HASH_ROUNDS);
 
-  //   }
+  // }
 }

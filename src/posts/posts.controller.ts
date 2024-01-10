@@ -1,13 +1,48 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { CreatePostDto } from './dto/createPost.dto';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  @Get()
+  getAllPosts() {
+    return this.postsService.getAllPosts();
+  }
+
+  @Get(':id')
+  getPostById(@Param('id') id: string) {
+    return this.postsService.getPostById(+id);
+  }
+
   @Post()
-  postPost(@Body() body: CreatePostDto): string {
-    return `body: ${body.subject}`;
+  postPost(
+    @Body('authorId') authorId: number,
+    @Body('title') title: string,
+    @Body('content') content: string,
+  ) {
+    return this.postsService.createPost(authorId, title, content);
+  }
+
+  @Patch(':id')
+  patchPost(
+    @Param('id') id: string,
+    @Body('title') title?: string,
+    @Body('content') content?: string,
+  ) {
+    return this.postsService.updatePost(+id, title, content);
+  }
+
+  @Delete(':id')
+  deletePost(@Param('id') id: string) {
+    return this.postsService.deletePost(+id);
   }
 }
