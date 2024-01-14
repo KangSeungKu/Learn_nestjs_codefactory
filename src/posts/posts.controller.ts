@@ -45,15 +45,14 @@ export class PostsController {
 
   @Post()
   @UseGuards(AccessTokenGuard)
-  @UseInterceptors(FileInterceptor('image'))
-  postPost(
+  async postPost(
     @User() user: UserModel,
     @Body() data: CreatePostDto,
-    @UploadedFile() file?: Express.Multer.File,
     // @Body('title') title: string,
     // @Body('content') content: string,
   ) {
-    return this.postsService.createPost(user.id, data, file?.filename);
+    await this.postsService.createPostImage(data);
+    return this.postsService.createPost(user.id, data);
   }
 
   @Patch(':id')
