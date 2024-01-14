@@ -20,6 +20,11 @@ export class PostModel extends BaseModel {
   @IsString({ message: 'content는 String타입을 입력해줘야 합니다.' })
   content: string;
 
+  @Column({
+    nullable: true,
+  })
+  image?: string;
+
   @Column()
   likeCount: number;
 
