@@ -13,6 +13,9 @@ async function bootstrap() {
         // Type decoration없이 자동으로 변경해주는 옵션
         enableImplicitConversion: true,
       },
+      whitelist: true,
+      // dto에 정의된 이외의 값이 들어올 경우, error를 표시
+      // forbidNonWhitelisted: true,
     }),
   );
 
