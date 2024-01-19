@@ -19,6 +19,9 @@ async function bootstrap() {
     }),
   );
 
+  // 모든 Exception에 대해 로깅이 가능
+  // app.useGlobalFilters(new HttpExceptionFilter());
+
   await app.listen(3000);
 }
 bootstrap();
